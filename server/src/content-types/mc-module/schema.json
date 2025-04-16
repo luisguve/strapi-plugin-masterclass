@@ -1,0 +1,51 @@
+{
+  "kind": "collectionType",
+  "collectionName": "mc_modules",
+  "info": {
+    "singularName": "mc-module",
+    "pluralName": "mc-modules",
+    "displayName": "Module",
+    "description": "A module in a masterclass course"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "content-manager": {
+      "visible": true
+    },
+    "content-type-builder": {
+      "visible": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "configurable": false
+    },
+    "description": {
+      "type": "text",
+      "configurable": false
+    },
+    "order": {
+      "type": "integer",
+      "required": true,
+      "configurable": false
+    },
+    "lectures": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugin::masterclass.mc-lecture",
+      "mappedBy": "module",
+      "configurable": false
+    },
+    "course": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::masterclass.mc-course",
+      "inversedBy": "modules",
+      "configurable": false
+    }
+  }
+}

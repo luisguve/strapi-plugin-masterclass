@@ -1,0 +1,58 @@
+{
+  "kind": "collectionType",
+  "collectionName": "mc_resources",
+  "info": {
+    "singularName": "mc-resource",
+    "pluralName": "mc-resources",
+    "displayName": "Resource",
+    "description": "A resource (video, document, etc.) for a lecture"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "content-manager": {
+      "visible": true
+    },
+    "content-type-builder": {
+      "visible": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "configurable": false
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": ["video", "document", "link"],
+      "required": true,
+      "configurable": false
+    },
+    "muxAsset": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::mux-video-uploader.mux-asset",
+      "configurable": false
+    },
+    "file": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["files"],
+      "configurable": false
+    },
+    "url": {
+      "type": "string",
+      "configurable": false
+    },
+    "lectures": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugin::masterclass.mc-lecture",
+      "mappedBy": "resource",
+      "configurable": false
+    }
+  }
+}

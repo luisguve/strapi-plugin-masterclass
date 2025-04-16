@@ -1,0 +1,47 @@
+{
+  "kind": "collectionType",
+  "collectionName": "mc_lectures",
+  "info": {
+    "singularName": "mc-lecture",
+    "pluralName": "mc-lectures",
+    "displayName": "Lecture",
+    "description": "A lecture in a masterclass course"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "content-manager": {
+      "visible": true
+    },
+    "content-type-builder": {
+      "visible": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "configurable": false
+    },
+    "order": {
+      "type": "integer",
+      "required": true,
+      "configurable": false
+    },
+    "resource": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::masterclass.mc-resource",
+      "inversedBy": "lectures",
+      "configurable": false
+    },
+    "module": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::masterclass.mc-module",
+      "inversedBy": "lectures",
+      "configurable": false
+    }
+  }
+}

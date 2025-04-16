@@ -1,0 +1,52 @@
+{
+  "kind": "collectionType",
+  "collectionName": "mc_categories",
+  "info": {
+    "singularName": "mc-category",
+    "pluralName": "mc-categories",
+    "displayName": "Category",
+    "description": "A category for organizing courses"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "content-manager": {
+      "visible": true
+    },
+    "content-type-builder": {
+      "visible": true
+    }
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "configurable": false
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true,
+      "configurable": false
+    },
+    "description": {
+      "type": "text",
+      "configurable": false
+    },
+    "courses": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugin::masterclass.mc-course",
+      "mappedBy": "category",
+      "configurable": false
+    },
+    "featured_courses": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::masterclass.mc-course",
+      "mappedBy": "featured_in",
+      "configurable": false
+    }
+  }
+}

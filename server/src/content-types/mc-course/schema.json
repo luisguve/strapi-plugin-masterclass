@@ -1,0 +1,93 @@
+{
+  "kind": "collectionType",
+  "collectionName": "mc_courses",
+  "info": {
+    "singularName": "mc-course",
+    "pluralName": "mc-courses",
+    "displayName": "Course",
+    "description": "A masterclass course"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "content-manager": {
+      "visible": true
+    },
+    "content-type-builder": {
+      "visible": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "configurable": false
+    },
+    "duration": {
+      "type": "integer",
+      "configurable": false
+    },
+    "description": {
+      "type": "text",
+      "required": true,
+      "configurable": false
+    },
+    "price": {
+      "type": "decimal",
+      "required": true,
+      "configurable": false
+    },
+    "thumbnail": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ],
+      "configurable": false
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title",
+      "required": true,
+      "configurable": false
+    },
+    "students": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugin::masterclass.mc-student-course",
+      "mappedBy": "course",
+      "configurable": false
+    },
+    "long_description": {
+      "type": "richtext",
+      "configurable": false
+    },
+    "category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::masterclass.mc-category",
+      "inversedBy": "courses",
+      "configurable": false
+    },
+    "featured_in": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::masterclass.mc-category",
+      "inversedBy": "featured_courses",
+      "configurable": false
+    },
+    "modules": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugin::masterclass.mc-module",
+      "mappedBy": "course",
+      "configurable": false
+    },
+    "modules_order": {
+      "type": "json",
+      "configurable": false
+    }
+  }
+}

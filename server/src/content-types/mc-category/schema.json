@@ -37,6 +37,20 @@
     "slug": {
       "type": "uid",
       "targetField": "title"
+    },
+    "difficulty": {
+      "type": "enumeration",
+      "enum": [
+        "Beginner",
+        "Intermediate",
+        "Advanced"
+      ]
+    },
+    "courses": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugin::masterclass.mc-course",
+      "mappedBy": "category"
     }
   }
 }

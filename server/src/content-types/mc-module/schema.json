@@ -4,10 +4,11 @@
   "info": {
     "singularName": "mc-module",
     "pluralName": "mc-modules",
-    "displayName": "Module"
+    "displayName": "Module",
+    "description": ""
   },
   "options": {
-    "comment": ""
+    "draftAndPublish": false
   },
   "attributes": {
     "title": {
@@ -15,6 +16,18 @@
     },
     "duration": {
       "type": "integer"
+    },
+    "course": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::masterclass.mc-course",
+      "inversedBy": "modules"
+    },
+    "lectures": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugin::masterclass.mc-lecture",
+      "mappedBy": "module"
     }
   }
 }

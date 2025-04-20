@@ -4,14 +4,26 @@
   "info": {
     "singularName": "mc-lecture",
     "pluralName": "mc-lectures",
-    "displayName": "Lecture"
+    "displayName": "Lecture",
+    "description": ""
   },
   "options": {
-    "comment": ""
+    "draftAndPublish": false
   },
   "attributes": {
     "title": {
       "type": "string"
+    },
+    "video": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::mux-video-uploader.mux-asset"
+    },
+    "module": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::masterclass.mc-module",
+      "inversedBy": "lectures"
     }
   }
 }

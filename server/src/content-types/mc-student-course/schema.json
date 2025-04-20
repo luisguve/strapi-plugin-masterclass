@@ -1,14 +1,37 @@
-
 {
   "kind": "collectionType",
   "collectionName": "mc_student_courses",
   "info": {
     "singularName": "mc-student-course",
     "pluralName": "mc-student-courses",
-    "displayName": "StudentCourse"
+    "displayName": "StudentCourse",
+    "description": ""
   },
   "options": {
-    "comment": ""
+    "draftAndPublish": false
   },
-  "attributes": {}
+  "attributes": {
+    "course": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::masterclass.mc-course",
+      "inversedBy": "students"
+    },
+    "student": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "courses"
+    },
+    "current_lecture": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::masterclass.mc-lecture"
+    },
+    "lectures_completed": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugin::masterclass.mc-lecture"
+    }
+  }
 }

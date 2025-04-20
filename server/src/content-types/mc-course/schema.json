@@ -4,10 +4,11 @@
   "info": {
     "singularName": "mc-course",
     "pluralName": "mc-courses",
-    "displayName": "Course"
+    "displayName": "Course",
+    "description": ""
   },
   "options": {
-    "comment": ""
+    "draftAndPublish": false
   },
   "attributes": {
     "title": {
@@ -24,16 +25,37 @@
     },
     "thumbnail": {
       "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images",
-        "files",
-        "videos",
-        "audios"
-      ],
-      "multiple": false
+        "files"
+      ]
     },
     "long_description": {
       "type": "richtext"
+    },
+    "category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::masterclass.mc-category",
+      "inversedBy": "courses"
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title"
+    },
+    "students": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugin::masterclass.mc-student-course",
+      "mappedBy": "course"
+    },
+    "modules": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugin::masterclass.mc-module",
+      "mappedBy": "course"
     }
   }
 }

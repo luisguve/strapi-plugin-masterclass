@@ -37,7 +37,9 @@
   "dependencies": {
     "@strapi/design-system": "^2.0.0-rc.21",
     "@strapi/icons": "^2.0.0-rc.21",
-    "react-intl": "^7.1.10"
+    "axios": "^1.8.4",
+    "react-intl": "^7.1.10",
+    "stripe": "^18.0.0"
   },
   "devDependencies": {
     "@strapi/sdk-plugin": "^5.3.2",
@@ -58,8 +60,8 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.30.0",
-    "styled-components": "^6.1.17",
-    "strapi-plugin-mux-video-uploader": "^3.0.1"
+    "strapi-plugin-mux-video-uploader": "^3.0.1",
+    "styled-components": "^6.1.17"
   },
   "strapi": {
     "kind": "plugin",

@@ -1,41 +1,14 @@
+
 {
   "kind": "collectionType",
   "collectionName": "mc_students",
   "info": {
     "singularName": "mc-student",
     "pluralName": "mc-students",
-    "displayName": "Student",
-    "description": "A student enrolled in masterclass courses"
+    "displayName": "Student"
   },
   "options": {
-    "draftAndPublish": true
+    "comment": ""
   },
-  "pluginOptions": {
-    "content-manager": {
-      "visible": true
-    },
-    "content-type-builder": {
-      "visible": true
-    }
-  },
-  "attributes": {
-    "user": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "plugin::users-permissions.user",
-      "required": true,
-      "configurable": false
-    },
-    "courses": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "plugin::masterclass.mc-student-course",
-      "mappedBy": "student",
-      "configurable": false
-    },
-    "progress": {
-      "type": "json",
-      "configurable": false
-    }
-  }
+  "attributes": {}
 }

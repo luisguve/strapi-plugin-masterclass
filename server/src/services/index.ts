@@ -1,9 +1,7 @@
-import service from './service';
-import stripeService from './stripeService';
-import paymentMethodService from './paymentMethodService';
+import stripeService from './stripe';
+import masterclassService from './masterclass';
 
 export default {
-  service,
   stripeService,
-  paymentMethodService,
+  masterclassService,
 };

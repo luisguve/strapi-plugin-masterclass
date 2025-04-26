@@ -1,4 +1,19 @@
-export default {
+export type CurrencyCode = 'eur' | 'usd' | 'cny' | 'dkk' | 'gbp' | 'nok' | 'sek' | 'aud' | 'nzd' | 'cad' | 'pln' | 'chf';
+
+interface PaymentMethod {
+  supportedCurrency: CurrencyCode[];
+}
+
+interface PaymentMethods {
+  sepaDirectDebit: PaymentMethod;
+  achDirectDebit: PaymentMethod;
+  alipay: PaymentMethod;
+  klarna: PaymentMethod;
+  sofort: PaymentMethod;
+  ideal: PaymentMethod;
+}
+
+const paymentMethods: PaymentMethods = {
   sepaDirectDebit: {
     supportedCurrency: ['eur'],
   },
@@ -18,3 +33,5 @@ export default {
     supportedCurrency: ['eur'],
   },
 };
+
+export default paymentMethods;

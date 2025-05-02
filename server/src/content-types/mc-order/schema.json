@@ -1,0 +1,54 @@
+{
+  "kind": "collectionType",
+  "collectionName": "mc_order",
+  "info": {
+    "singularName": "mc-order",
+    "pluralName": "mc-orders",
+    "displayName": "Order",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false,
+    "comment": ""
+  },
+  "attributes": {
+    "amount": {
+      "type": "decimal",
+      "configurable": false
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "configurable": false
+    },
+    "confirmed": {
+      "type": "boolean",
+      "configurable": false
+    },
+    "checkout_session": {
+      "type": "string",
+      "configurable": false
+    },
+    "payment_method": {
+      "type": "enumeration",
+      "enum": [
+        "paypal",
+        "credit_card"
+      ],
+      "configurable": false
+    },
+    "payload": {
+      "type": "json",
+      "configurable": false
+    },
+    "items": {
+      "type": "json",
+      "configurable": false
+    },
+    "response": {
+      "type": "json",
+      "configurable": false
+    }
+  }
+}

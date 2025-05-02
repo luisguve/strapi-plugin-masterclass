@@ -14,18 +14,6 @@ const register = ({ strapi }: { strapi: Core.Strapi }) => {
       mappedBy: 'student',
     },
   };
-
-  // Extend the mux-video-uploader plugin by adding a new field called lecture
-  const muxAsset = strapi.contentType('plugin::mux-video-uploader.mux-asset')
-  muxAsset.attributes = {
-    ...muxAsset.attributes,
-    lecture: {
-      type: 'relation',
-      relation: 'oneToOne',
-      target: 'plugin::masterclass.mc-lecture',
-      mappedBy: 'video',
-    },
-  };
 };
 
 export default register;

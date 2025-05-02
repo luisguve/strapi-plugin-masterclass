@@ -3,6 +3,12 @@ import { Config } from '../utils/config';
 export default {
   default: {
     stripeSecretKey: '',
+    paypalClientId: '',
+    paypalClientSecret: '',
+    brandName: '',
+    paypalReturnUrl: '',
+    paypalCancelUrl: '',
+    paypalProductionMode: false,
     callbackUrl: '',
     paymentMethods: ['card'],
     allowPromotionCodes: false,

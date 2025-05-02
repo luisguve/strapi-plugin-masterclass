@@ -2,6 +2,12 @@ import { PLUGIN_NAME } from '../constants';
 
 export interface Config {
   stripeSecretKey?: string;
+  paypalClientId?: string;
+  paypalClientSecret?: string;
+  paypalBrandName?: string;
+  paypalReturnUrl?: string;
+  paypalCancelUrl?: string;
+  paypalProductionMode?: boolean;
   callbackUrl?: string; // The response from Stripe will be posted to this URL.
   paymentMethods?: string[]; // List of payment methods that can be used for the checkout.
   allowPromotionCodes?: boolean; // Whether to allow promotion codes or not.

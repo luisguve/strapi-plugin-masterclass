@@ -27,6 +27,7 @@
     "dist"
   ],
   "scripts": {
+    "strapi": "strapi",
     "build": "strapi-plugin build",
     "test:ts:back": "run -T tsc -p server/tsconfig.json",
     "test:ts:front": "run -T tsc -p admin/tsconfig.json",

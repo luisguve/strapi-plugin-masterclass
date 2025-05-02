@@ -1,7 +1,11 @@
 import stripeService from './stripe';
-import masterclassService from './masterclass';
+import paypalService from './paypal';
+import paymentsService from './payments';
+import coursesService from './courses';
 
 export default {
   stripeService,
-  masterclassService,
+  paypalService,
+  paymentsService,
+  coursesService,
 };

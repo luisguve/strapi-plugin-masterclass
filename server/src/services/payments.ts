@@ -125,7 +125,7 @@ const paymentsService = ({ strapi }: { strapi: Core.Strapi }) => ({
       serviceName = "paypal";
     }
 
-    const result = await getService(serviceName).get_payment_status(checkout_session);
+    const result = await getService(serviceName).getPaymentStatus(checkout_session);
     if (result.error) {
       return result;
     }
@@ -153,8 +153,5 @@ const paymentsService = ({ strapi }: { strapi: Core.Strapi }) => ({
 export default paymentsService;
 export type PaymentsService = {
   create: (params: any) => Promise<any>;
-  isValidConfig: () => boolean;
-  getPaypalAuth: () => Promise<any>;
-  createCheckoutSession: (items: any) => Promise<any>;
-  get_payment_status: (checkout_session: any) => Promise<any>;
+  confirm: (params: any) => Promise<any>;
 };

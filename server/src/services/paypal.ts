@@ -100,7 +100,7 @@ const paypalService = ({ strapi }: { strapi: Core.Strapi }) => ({
     return { data, checkout_session, total };
   },
 
-  async get_payment_status(checkout_session) {
+  async getPaymentStatus(checkout_session) {
     // Capture paypal
     if (!this.isValidConfig()) {
       return {
@@ -151,4 +151,7 @@ const paypalService = ({ strapi }: { strapi: Core.Strapi }) => ({
 });
 
 export default paypalService;
-export type PaypalService = ReturnType<typeof paypalService>;
+export type PaypalService = {
+  createCheckoutSession: (params: any) => Promise<any>;
+  getPaymentStatus: (params: any) => Promise<any>;
+};

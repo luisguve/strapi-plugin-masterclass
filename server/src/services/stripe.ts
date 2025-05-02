@@ -72,7 +72,7 @@ const stripeService = ({ strapi }: { strapi: Core.Strapi }) => ({
     return { data, checkout_session, total };
   },
 
-  async get_payment_status(checkout_session) {
+  async getPaymentStatus(checkout_session) {
     let session;
 
     const stripeClient = await this.getStripeClient();
@@ -99,4 +99,7 @@ const stripeService = ({ strapi }: { strapi: Core.Strapi }) => ({
 });
 
 export default stripeService;
-export type StripeService = ReturnType<typeof stripeService>;
+export type StripeService = {
+  createCheckoutSession: (params: any) => Promise<any>;
+  getPaymentStatus: (params: any) => Promise<any>;
+};

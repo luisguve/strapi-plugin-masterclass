@@ -145,7 +145,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
     // Sign in user to the courses purchased.
     if (courses.length > 0) {
-      await getService("courses").signIntoMultipleCourses(user, courses);
+      await getService("courses").signIntoMultipleCourses({user, courses});
     }
 
     order.courses = courses

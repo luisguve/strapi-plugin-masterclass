@@ -24,6 +24,7 @@
     },
     "confirmed": {
       "type": "boolean",
+      "default": false,
       "configurable": false
     },
     "checkout_session": {

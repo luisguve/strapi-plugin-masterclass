@@ -8,7 +8,8 @@ const coursesService = ({ strapi }: { strapi: Core.Strapi }) => ({
   /*
    *  registers student into a single course
    */
-  async signIntoSingleCourse(user, course) {
+  async signIntoSingleCourse(params) {
+    const { user, course } = params;
     return await strapi.documents(STUDENT_COURSE_MODEL).create({
       data: {
         student: user,
@@ -19,7 +20,8 @@ const coursesService = ({ strapi }: { strapi: Core.Strapi }) => ({
   /*
    *  registers student into multiple courses
    */
-  async signIntoMultipleCourses(user, courses) {
+  async signIntoMultipleCourses(params) {
+    const { user, courses } = params;
     const student = await strapi.documents("plugin::users-permissions.user").findOne({
       documentId: user.documentId,
       populate: {
@@ -66,5 +68,8 @@ const coursesService = ({ strapi }: { strapi: Core.Strapi }) => ({
 });
 
 export default coursesService;
-
-export type CoursesService = ReturnType<typeof coursesService>;
+export type CoursesService = {
+  signIntoSingleCourse: (params: any) => Promise<any>;
+  signIntoMultipleCourses: (params: any) => Promise<any>;
+  calculateDuration: (lectures: any) => Promise<any>;
+};

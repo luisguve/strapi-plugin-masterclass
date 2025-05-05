@@ -237,14 +237,10 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
       return ctx.badRequest("The lecture does not exist")
     }
     // Update student
-    await strapi.documents(STUDENT_COURSE_MODEL).update(
-      {
-        documentId: student.documentId,
-        data: {
-          // current_lecture: newCurrentLecture.id
-        }
-      }
-    )
+    await strapi.documents(STUDENT_COURSE_MODEL).update({
+      documentId: student.documentId,
+      data: { current_lecture: newCurrentLecture.id } as any
+    })
 
     const token = await strapi.service('plugin::strapi-plugin-mux-video-uploader.mux')
       .signPlaybackId(newCurrentLecture.video.asset_id, "video");
@@ -346,9 +342,9 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
       {
         documentId: student.documentId,
         data: {
-          // current_lecture: newCurrentLecture ? newCurrentLecture.id : null,
-          // lectures_completed: classesCompleted
-        }
+          current_lecture: newCurrentLecture ? newCurrentLecture.id : null,
+          lectures_completed: classesCompleted
+        } as any
       }
     )
     ctx.body = {

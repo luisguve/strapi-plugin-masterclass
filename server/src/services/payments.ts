@@ -1,6 +1,6 @@
 import type { Core } from '@strapi/strapi';
 import { getService } from '../utils';
-import { ORDER_MODEL } from 'src/utils/types';
+import { ORDER_MODEL } from '../utils/types';
 
 const paymentsService = ({ strapi }: { strapi: Core.Strapi }) => ({
   async create(params) {
@@ -143,7 +143,7 @@ const paymentsService = ({ strapi }: { strapi: Core.Strapi }) => ({
       documentId: order.documentId,
       data: {
         confirmed: true
-      }
+      } as any
     })
     order.confirmed = true
     return order

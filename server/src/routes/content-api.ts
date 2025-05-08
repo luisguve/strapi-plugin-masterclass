@@ -1,6 +1,22 @@
 export default [
   {
     method: 'GET',
+    path: '/categories/index',
+    handler: 'categories.index',
+    config: {
+      policies: [],
+    }
+  },
+  {
+    method: 'GET',
+    path: '/categories/:slug',
+    handler: 'categories.findOne',
+    config: {
+      policies: [],
+    }
+  },
+  {
+    method: 'GET',
     path: '/courses',
     handler: 'courses.find',
     config: {
@@ -75,22 +91,6 @@ export default [
     method: 'GET',
     path: '/my-learning',
     handler: 'courses.getMyLearning',
-    config: {
-      policies: [],
-    }
-  },
-  {
-    method: 'GET',
-    path: '/categories/index',
-    handler: 'categories.index',
-    config: {
-      policies: [],
-    }
-  },
-  {
-    method: 'GET',
-    path: '/categories/:slug',
-    handler: 'categories.summary',
     config: {
       policies: [],
     }

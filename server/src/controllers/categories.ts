@@ -11,12 +11,9 @@ export const courseQuery = {
     modules: {
       populate: {
         lectures: {
-          fields: []
+          fields: ["title", "duration"]
         }
       }
-    },
-    category: {
-      fields: ["slug", "title", "id"]
     }
   }
 }
@@ -51,7 +48,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       categories: await strapi.contentAPI.sanitize.output(result, schema)
     }
   },
-  async summary(ctx: Context) {
+  async findOne(ctx: Context) {
     const { document_id } = ctx.params
     const category = await strapi.documents(CATEGORY_MODEL).findOne({
       documentId: document_id,

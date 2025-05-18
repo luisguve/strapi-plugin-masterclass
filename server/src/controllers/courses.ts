@@ -31,14 +31,14 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
   },
   async findOne(ctx: Context) {
     const { slug } = ctx.params
-    const course = await strapi.documents(COURSE_MODEL).findOne({
-      documentId: slug,
+    const course = await strapi.documents(COURSE_MODEL).findFirst({
+      filters: { slug: { $eq: slug } },
       populate: {
         thumbnail: {
           fields: ["name", "url"]
         },
         modules: {
-          fields: ["title", "lectures_order", "duration"],
+          fields: ["title", "duration"],
           populate: {
             lectures: {
               fields: ["title"],
@@ -406,7 +406,7 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
                   fields: ["name", "url"]
                 },
                 modules: {
-                  fields: ["title", "duration", "lectures_order"],
+                  fields: ["title", "duration"],
                   populate: {
                     lectures: {
                       fields: ["title"],

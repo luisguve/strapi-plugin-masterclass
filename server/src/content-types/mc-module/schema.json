@@ -28,6 +28,9 @@
       "relation": "oneToMany",
       "target": "plugin::masterclass.mc-lecture",
       "mappedBy": "module"
+    },
+    "description": {
+      "type": "blocks"
     }
   }
 }

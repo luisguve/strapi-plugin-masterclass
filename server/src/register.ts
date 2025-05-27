@@ -1,4 +1,5 @@
 import type { Core } from '@strapi/strapi';
+import { registerDocServiceMiddleware } from './document-service-middlewares'
 
 const register = ({ strapi }: { strapi: Core.Strapi }) => {
   // Extend the user model by adding a new field called courses
@@ -14,6 +15,8 @@ const register = ({ strapi }: { strapi: Core.Strapi }) => {
       mappedBy: 'student',
     },
   };
+
+  registerDocServiceMiddleware({ strapi });
 };
 
 export default register;

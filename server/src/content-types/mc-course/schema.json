@@ -15,7 +15,8 @@
       "type": "string"
     },
     "duration": {
-      "type": "integer"
+      "type": "integer",
+      "configurable": false
     },
     "description": {
       "type": "richtext"
@@ -34,6 +35,21 @@
     },
     "long_description": {
       "type": "richtext"
+    },
+    "difficulty": {
+      "type": "enumeration",
+      "enum": [
+        "Beginner",
+        "Intermediate",
+        "Advanced"
+      ]
+    },
+    "language": {
+      "type": "enumeration",
+      "enum": [
+        "English",
+        "Русский"
+      ]
     },
     "category": {
       "type": "relation",
@@ -56,6 +72,12 @@
       "relation": "oneToMany",
       "target": "plugin::masterclass.mc-module",
       "mappedBy": "course"
+    },
+    "instructor": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::masterclass.mc-instructor",
+      "inversedBy": "courses"
     }
   }
 }

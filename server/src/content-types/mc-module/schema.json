@@ -15,7 +15,8 @@
       "type": "string"
     },
     "duration": {
-      "type": "integer"
+      "type": "integer",
+      "configurable": false
     },
     "course": {
       "type": "relation",

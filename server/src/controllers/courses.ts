@@ -4,7 +4,7 @@ import { COURSE_MODEL, STUDENT_COURSE_MODEL, LECTURE_MODEL } from '../utils/type
 
 const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
   async find(ctx: Context) {
-    const courses = await strapi.documents(COURSE_MODEL).findMany({
+    let courses = await strapi.documents(COURSE_MODEL).findMany({
       populate: {
         thumbnail: {
           fields: ["name", "url"]
@@ -24,14 +24,36 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
         },
         category: {
           fields: ["slug", "title", "id"]
+        },
+        students: {
+          fields: ["documentId"]
+        },
+        instructor: {
+          fields: ["name", "slug", "bio", "designation"],
+          populate: {
+            image: {
+              fields: ["name", "url"]
+            }
+          }
         }
+      }
+    });
+    // Add the number of students and total lectures to each course
+    courses = courses.map(course => {
+      const totalLectures = course.modules.reduce((acc, module) => {
+        return acc + module.lectures.length
+      }, 0)
+      return {
+        ...course,
+        total_students: course.students.length,
+        total_lectures: totalLectures
       }
     });
     ctx.body = { courses }
   },
   async findOne(ctx: Context) {
     const { slug } = ctx.params
-    const course = await strapi.documents(COURSE_MODEL).findFirst({
+    let course = await strapi.documents(COURSE_MODEL).findFirst({
       filters: { slug: { $eq: slug } },
       populate: {
         thumbnail: {
@@ -52,9 +74,28 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
         },
         category: {
           fields: ["slug", "title", "id"]
-        }
+        },
+        instructor: {
+          fields: ["name", "slug", "bio", "designation"],
+          populate: {
+            image: {
+              fields: ["name", "url"]
+            }
+          }
+        },
+        students: {
+          fields: ["documentId"]
+        },
       }
-    })
+    });
+    const totalLectures = course.modules.reduce((acc, module) => {
+      return acc + module.lectures.length
+    }, 0)
+    course = {
+      ...course,
+      total_students: course.students.length,
+      total_lectures: totalLectures
+    }
     ctx.body = { course }
   },
   async findSlugs(ctx: Context) {

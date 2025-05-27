@@ -1,10 +1,10 @@
 {
   "kind": "collectionType",
-  "collectionName": "mc_categories",
+  "collectionName": "mc_instructors",
   "info": {
-    "singularName": "mc-category",
-    "pluralName": "mc-categories",
-    "displayName": "Category",
+    "singularName": "mc-instructor",
+    "pluralName": "mc-instructors",
+    "displayName": "Instructor",
     "description": ""
   },
   "options": {
@@ -19,30 +19,32 @@
     }
   },
   "attributes": {
-    "title": {
+    "name": {
       "type": "string"
     },
-    "description": {
+    "bio": {
       "type": "richtext"
     },
-    "thumbnail": {
+    "image": {
       "type": "media",
       "multiple": false,
       "required": false,
       "allowedTypes": [
-        "images",
-        "files"
+        "images"
       ]
     },
     "slug": {
       "type": "uid",
-      "targetField": "title"
+      "targetField": "name"
+    },
+    "designation": {
+      "type": "string"
     },
     "courses": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "plugin::masterclass.mc-course",
-      "mappedBy": "category"
+      "mappedBy": "instructor"
     }
   }
 }

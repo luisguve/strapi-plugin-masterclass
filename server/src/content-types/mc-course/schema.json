@@ -19,7 +19,7 @@
       "configurable": false
     },
     "description": {
-      "type": "richtext"
+      "type": "blocks"
     },
     "price": {
       "type": "decimal"
@@ -34,7 +34,7 @@
       ]
     },
     "long_description": {
-      "type": "richtext"
+      "type": "blocks"
     },
     "difficulty": {
       "type": "enumeration",

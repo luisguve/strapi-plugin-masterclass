@@ -13,12 +13,7 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
           fields: ["title", "duration"],
           populate: {
             lectures: {
-              fields: ["title"],
-              populate: {
-                video: {
-                  fields: ["duration"]
-                }
-              }
+              fields: ["title", "duration"],
             }
           }
         },
@@ -60,15 +55,10 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
           fields: ["name", "url"]
         },
         modules: {
-          fields: ["title", "duration"],
+          fields: ["title", "duration", "description"],
           populate: {
             lectures: {
-              fields: ["title"],
-              populate: {
-                video: {
-                  fields: ["duration"]
-                }
-              }
+              fields: ["title", "duration"],
             }
           }
         },

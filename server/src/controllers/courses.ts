@@ -395,7 +395,7 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
         courses: {
           populate: {
             course: {
-              fields: ["id"]
+              fields: ["documentId"]
             }
           }
         }
@@ -419,38 +419,33 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
     }
     const student = await strapi.documents("plugin::users-permissions.user").findOne({
       documentId: user.documentId,
+      fields: [],
       populate: {
         courses: {
           populate: {
             course: {
               fields: [
-                "id",
+                "documentId",
                 "duration",
                 "title",
                 "description",
-                "modules_order",
                 "price",
                 "slug"
               ],
               populate: {
                 thumbnail: {
-                  fields: ["name", "url"]
+                  fields: ["documentId", "name", "url"]
                 },
                 modules: {
-                  fields: ["title", "duration"],
+                  fields: ["documentId", "title", "duration"],
                   populate: {
                     lectures: {
-                      fields: ["title"],
-                      populate: {
-                        video: {
-                          fields: ["duration"]
-                        }
-                      }
+                      fields: ["documentId", "title", "duration"],
                     }
                   }
                 },
                 category: {
-                  fields: ["slug", "title", "id"]
+                  fields: ["documentId", "slug", "title"]
                 }
               }
             }

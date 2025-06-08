@@ -23,7 +23,8 @@ const stripeService = ({ strapi }: { strapi: Core.Strapi }) => ({
     return new Stripe(stripeSecretKey);
   },
 
-  async createCheckoutSession(items, user) {
+  async createCheckoutSession(params) {
+    const { items, user } = params;
     // Pay with credit card: create order with Stripe
     const stripeClient = await this.getStripeClient();
     if (!stripeClient) {
@@ -62,7 +63,7 @@ const stripeService = ({ strapi }: { strapi: Core.Strapi }) => ({
       data = session;
       checkout_session = session.id;
     } catch(err) {
-      console.log(err)
+      console.log('stripe error:', err)
       return {
         error: true,
         status: "internalServerError",

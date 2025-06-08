@@ -38,7 +38,8 @@ const paypalService = ({ strapi }: { strapi: Core.Strapi }) => ({
     };
   },
 
-  async createCheckoutSession(items) {
+  async createCheckoutSession(params) {
+    const { items } = params;
     // Pay with PayPal: create order with PayPal
     if (!this.isValidConfig()) {
       return {

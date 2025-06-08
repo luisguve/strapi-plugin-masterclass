@@ -4,8 +4,8 @@ import paymentsService from './payments';
 import coursesService from './courses';
 
 export default {
-  stripeService,
-  paypalService,
-  paymentsService,
-  coursesService,
+  stripe: stripeService,
+  paypal: paypalService,
+  payments: paymentsService,
+  courses: coursesService,
 };

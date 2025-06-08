@@ -93,7 +93,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         return ctx[result.status](result.msg)
       }
     } catch(err) {
-      console.log(err);
+      console.log('orders error:', err);
       return ctx.internalServerError("Something went wrong");
     }
 

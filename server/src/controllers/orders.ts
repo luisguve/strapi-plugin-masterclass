@@ -93,7 +93,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         return ctx[result.status](result.msg)
       }
     } catch(err) {
-      console.log('orders error:', err);
+      console.log('orders create error:', err);
       return ctx.internalServerError("Something went wrong");
     }
 
@@ -135,7 +135,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     if (courses_ids && courses_ids.length > 0) {
       courses = await strapi.documents(COURSE_MODEL).findMany({
         filters: {
-          id: {
+          documentId: {
             $in: courses_ids
           }
         },
@@ -148,8 +148,16 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       await getService("courses").signIntoMultipleCourses({user, courses});
     }
 
-    order.courses = courses
-
-    ctx.body = { order }
+    ctx.body = {
+      courses,
+      id: order.id,
+      documentId: order.documentId,
+      amount: order.amount,
+      confirmed: order.confirmed,
+      payment_method: order.payment_method,
+      createdAt: order.createdAt,
+      publishedAt: order.publishedAt,
+      updatedAt: order.updatedAt,
+    };
   }
 });

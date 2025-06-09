@@ -57,8 +57,8 @@ const stripeService = ({ strapi }: { strapi: Core.Strapi }) => ({
         }),
         customer_email: user.email,
         mode: "payment",
-        success_url: this.success_url,
-        cancel_url: this.cancel_url,
+        success_url: `${this.success_url}?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${this.cancel_url}?session_id={CHECKOUT_SESSION_ID}`,
       });
       data = session;
       checkout_session = session.id;

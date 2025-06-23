@@ -10,10 +10,10 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
           fields: ["name", "url"]
         },
         modules: {
-          fields: ["title", "duration"],
+          fields: ["title", "duration", "slug"],
           populate: {
             lectures: {
-              fields: ["title", "duration"],
+              fields: ["title", "duration", "slug"],
             }
           }
         },
@@ -55,10 +55,10 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
           fields: ["name", "url"]
         },
         modules: {
-          fields: ["title", "duration", "description"],
+          fields: ["title", "duration", "description", "slug"],
           populate: {
             lectures: {
-              fields: ["title", "duration"],
+              fields: ["title", "duration", "slug"],
             }
           }
         },
@@ -100,30 +100,33 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
   */
   async getCourseDetails(ctx: Context) {
     const { user } = ctx.state
-    const { id } = ctx.params
+    const { courseId } = ctx.params
     let classesCompleted = []
     if (user) {
       // Get user progress
       const student = await strapi.documents(STUDENT_COURSE_MODEL).findFirst(
         {
           filters: {
-            student: user.id,
-            course: id
+            student: { documentId: { $eq: user.documentId } },
+            course: { documentId: { $eq: courseId } }
           },
           populate: {
-            lectures_seen: {
-              fields: ["id"]
+            lectures_completed: {
+              fields: ["documentId", "slug"]
+            },
+            current_lecture: {
+              fields: ["documentId", "slug"]
             }
           }
         }
       )
       if (student) {
-        classesCompleted = student.lectures_seen
+        classesCompleted = student.lectures_completed
       }
     }
     const students = await strapi.documents(STUDENT_COURSE_MODEL).count({
       filters: {
-        course: id
+        course: { documentId: { $eq: courseId } }
       }
     })
     ctx.body = { classesCompleted, students }
@@ -133,18 +136,18 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
   */
   async getClassesCompleted(ctx: Context) {
     const { user } = ctx.state
-    const { id } = ctx.params
+    const { courseId } = ctx.params
     if (!user) {
       return ctx.badRequest("There must be an user")
     }
     const student = await strapi.documents(STUDENT_COURSE_MODEL).findFirst(
       {
         filters: {
-          student: user.id,
-          course: id
+          student: { documentId: { $eq: user.documentId } },
+          course: { documentId: { $eq: courseId } }
         },
         populate: {
-          lectures_seen: {
+          lectures_completed: {
             fields: ["id"]
           }
         }
@@ -153,22 +156,22 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
     if (!student) {
       return ctx.badRequest("No access to this course")
     }
-    ctx.body = { classesCompleted: student.lectures_seen }
+    ctx.body = { classesCompleted: student.lectures_completed }
   },
   /*
-  * Resume course
+  * Get current lecture to resume course
   */
-  async resumeCourse(ctx: Context) {
+  async getCurrentLecture(ctx: Context) {
     const { user } = ctx.state
-    const { id } = ctx.params
+    const { courseId } = ctx.params
     if (!user) {
       return ctx.badRequest("There must be an user")
     }
     const student = await strapi.documents(STUDENT_COURSE_MODEL).findFirst(
       {
         filters: {
-          student: user.id,
-          course: id
+          student: { documentId: { $eq: user.documentId} },
+          course: { documentId: { $eq: courseId } }
         },
         populate: {
           course: {
@@ -186,7 +189,62 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
               }
             }
           },
-          lectures_seen: {
+          current_lecture: {
+            fields: ["id", "documentId", "title", "slug"]
+          }
+        }
+      }
+    );
+    if (!student) {
+      return ctx.badRequest("No access to this course")
+    }
+
+    const lectures = student.course.modules.reduce((lectures, module) => {
+      return lectures.concat(module.lectures)
+    }, [])
+
+    if (!lectures.length) {
+      return ctx.badRequest("This course does not have any lecture")
+    }
+
+    const currentLecture = student.current_lecture || lectures[0]
+
+    return {
+      currentLecture
+    }
+  },
+  /*
+  * Resume course
+  */
+  async resumeCourse(ctx: Context) {
+    const { user } = ctx.state
+    const { courseId } = ctx.params
+    if (!user) {
+      return ctx.badRequest("There must be an user")
+    }
+    const student = await strapi.documents(STUDENT_COURSE_MODEL).findFirst(
+      {
+        filters: {
+          student: { documentId: { $eq: user.documentId} },
+          course: { documentId: { $eq: courseId } }
+        },
+        populate: {
+          course: {
+            populate: {
+              modules: {
+                populate: {
+                  lectures: {
+                    populate: {
+                      video: {
+                        fields: ["id", "asset_id"]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          lectures_completed: {
             fields: ["id"]
           },
           current_lecture: {
@@ -214,14 +272,14 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
 
     const currentLecture = student.current_lecture || lectures[0]
 
-    const token = await strapi.service('plugin::strapi-plugin-mux-video-uploader.mux')
+    const signed = await strapi.service('plugin::mux-video-uploader.mux')
       .signPlaybackId(currentLecture.video.asset_id, "video");
     const playbackID = currentLecture.video.asset_id;
 
     return {
-      PlayAuth: `https://stream.mux.com/${playbackID}.m3u8?token=${token}`,
+      PlayAuth: `https://stream.mux.com/${playbackID}.m3u8?token=${signed.token}`,
       VideoId: playbackID,
-      classesCompleted: student.lectures_seen,
+      classesCompleted: student.lectures_completed,
       currentLectureID: currentLecture.id
     }
   },
@@ -233,16 +291,16 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
     if (!user) {
       return ctx.badRequest("There must be an user")
     }
-    const { id } = ctx.params
+    const { courseId } = ctx.params
     const { lecture } = ctx.query
     const student = await strapi.documents(STUDENT_COURSE_MODEL).findFirst(
       {
         filters: {
-          student: user.id,
-          course: id
+          student: { documentId: { $eq: user.documentId } },
+          course: { documentId: { $eq: courseId } }
         },
         populate: {
-          lectures_seen: {
+          lectures_completed: {
             fields: ["id"]
           }
         }
@@ -254,9 +312,7 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
 
     const newCurrentLecture = await strapi.documents(LECTURE_MODEL).findFirst(
       {
-        filters: {
-          id: lecture
-        },
+        filters: { slug: { $eq: lecture } },
         populate: {
           video: {
             fields: ["asset_id"]
@@ -273,27 +329,27 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
       data: { current_lecture: newCurrentLecture.id } as any
     })
 
-    const token = await strapi.service('plugin::strapi-plugin-mux-video-uploader.mux')
+    const signed = await strapi.service('plugin::mux-video-uploader.mux')
       .signPlaybackId(newCurrentLecture.video.asset_id, "video");
     const playbackID = newCurrentLecture.video.asset_id;
 
     return {
-      PlayAuth: `https://stream.mux.com/${playbackID}.m3u8?token=${token}`,
+      PlayAuth: `https://stream.mux.com/${playbackID}.m3u8?token=${signed.token}`,
       VideoId: newCurrentLecture.video.asset_id,
-      classesCompleted: student.lectures_seen,
+      classesCompleted: student.lectures_completed,
       currentLectureID: newCurrentLecture.id
     }
   },
   async checkLecture(ctx: Context) {
     const { user } = ctx.state
-    const { id } = ctx.params
+    const { courseId } = ctx.params
     const { lecture } = ctx.query
 
     const student = await strapi.documents(STUDENT_COURSE_MODEL).findFirst(
       {
         filters: {
-          student: {user: user.id},
-          course: id
+          student: { user: { documentId: { $eq: user.documentId } } },
+          course: { documentId: { $eq: courseId } }
         },
         populate: {
           course: {
@@ -307,7 +363,7 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
               }
             }
           },
-          lectures_seen: {
+          lectures_completed: {
             fields: ["id"]
           },
           current_lecture: {
@@ -336,7 +392,7 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
     }
 
     let updateCurrentLecture = true
-    let classesCompleted = student.lectures_seen
+    let classesCompleted = student.lectures_completed
     if (!classesCompleted || !classesCompleted.length) {
       classesCompleted = [lecture]
     } else {
@@ -423,6 +479,12 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
       populate: {
         courses: {
           populate: {
+            current_lecture: {
+              fields: ['slug']
+            },
+            lectures_completed: {
+              fields: ['slug']
+            },
             course: {
               fields: [
                 "documentId",

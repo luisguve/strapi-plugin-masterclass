@@ -14,6 +14,10 @@
     "title": {
       "type": "string"
     },
+    "slug": {
+      "type": "uid",
+      "targetField": "title"
+    },
     "duration": {
       "type": "integer",
       "configurable": false

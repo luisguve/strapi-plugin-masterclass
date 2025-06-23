@@ -41,7 +41,7 @@ export default [
   },
   {
     method: 'GET',
-    path: '/course-details/:id',
+    path: '/course-details/:courseId',
     handler: 'courses.getCourseDetails',
     config: {
       policies: [],
@@ -49,7 +49,7 @@ export default [
   },
   {
     method: 'GET',
-    path: '/courses/:id/classes-completed',
+    path: '/courses/:courseId/classes-completed',
     handler: 'courses.getClassesCompleted',
     config: {
       policies: [],
@@ -57,7 +57,15 @@ export default [
   },
   {
     method: 'GET',
-    path: '/courses/:id/resume-course',
+    path: '/courses/:courseId/get-current-lecture',
+    handler: 'courses.getCurrentLecture',
+    config: {
+      policies: [],
+    }
+  },
+  {
+    method: 'GET',
+    path: '/courses/:courseId/resume-course',
     handler: 'courses.resumeCourse',
     config: {
       policies: [],
@@ -65,7 +73,7 @@ export default [
   },
   {
     method: 'GET',
-    path: '/courses/:id/get-play-auth-lecture',
+    path: '/courses/:courseId/get-play-auth-lecture',
     handler: 'courses.getPlayAuth',
     config: {
       policies: [],
@@ -73,7 +81,7 @@ export default [
   },
   {
     method: 'PUT',
-    path: '/courses/:id/check-lecture',
+    path: '/courses/:courseId/check-lecture',
     handler: 'courses.checkLecture',
     config: {
       policies: [],

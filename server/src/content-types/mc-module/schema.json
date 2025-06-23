@@ -30,6 +30,10 @@
       "target": "plugin::masterclass.mc-lecture",
       "mappedBy": "module"
     },
+    "slug": {
+      "type": "uid",
+      "targetField": "title"
+    },
     "description": {
       "type": "blocks"
     }

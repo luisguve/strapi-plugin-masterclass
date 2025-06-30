@@ -236,7 +236,7 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
                   lectures: {
                     populate: {
                       video: {
-                        fields: ["id", "asset_id"]
+                        fields: ["id", "asset_id", "playback_id"]
                       }
                     }
                   }
@@ -251,7 +251,7 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
             fields: ["id"],
             populate: {
               video: {
-                fields: ["asset_id"]
+                fields: ["asset_id", "playback_id"]
               }
             }
           }
@@ -273,8 +273,8 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
     const currentLecture = student.current_lecture || lectures[0]
 
     const signed = await strapi.service('plugin::mux-video-uploader.mux')
-      .signPlaybackId(currentLecture.video.asset_id, "video");
-    const playbackID = currentLecture.video.asset_id;
+      .signPlaybackId(currentLecture.video.playback_id, "video");
+    const playbackID = currentLecture.video.playback_id;
 
     return {
       PlayAuth: `https://stream.mux.com/${playbackID}.m3u8?token=${signed.token}`,
@@ -315,7 +315,7 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
         filters: { slug: { $eq: lecture } },
         populate: {
           video: {
-            fields: ["asset_id"]
+            fields: ["asset_id", "playback_id"]
           }
         }
       }
@@ -330,12 +330,12 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
     })
 
     const signed = await strapi.service('plugin::mux-video-uploader.mux')
-      .signPlaybackId(newCurrentLecture.video.asset_id, "video");
-    const playbackID = newCurrentLecture.video.asset_id;
+      .signPlaybackId(newCurrentLecture.video.playback_id, "video");
+    const playbackID = newCurrentLecture.video.playback_id;
 
     return {
       PlayAuth: `https://stream.mux.com/${playbackID}.m3u8?token=${signed.token}`,
-      VideoId: newCurrentLecture.video.asset_id,
+      VideoId: newCurrentLecture.video.playback_id,
       classesCompleted: student.lectures_completed,
       currentLectureID: newCurrentLecture.id
     }

@@ -13,7 +13,7 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
           fields: ["title", "duration", "slug"],
           populate: {
             lectures: {
-              fields: ["title", "duration", "slug"],
+              fields: ["title", "duration", "slug", "description"],
             }
           }
         },
@@ -58,7 +58,7 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
           fields: ["title", "duration", "description", "slug"],
           populate: {
             lectures: {
-              fields: ["title", "duration", "slug"],
+              fields: ["title", "duration", "slug", "description"],
             }
           }
         },
@@ -179,6 +179,7 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
               modules: {
                 populate: {
                   lectures: {
+                    fields: ["documentId", "title", "description", "duration", "slug"],
                     populate: {
                       video: {
                         fields: ["id", "asset_id"]
@@ -343,12 +344,12 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
   async checkLecture(ctx: Context) {
     const { user } = ctx.state
     const { courseId } = ctx.params
-    const { lecture } = ctx.query
+    const { lecture_id } = ctx.request.body;
 
     const student = await strapi.documents(STUDENT_COURSE_MODEL).findFirst(
       {
         filters: {
-          student: { user: { documentId: { $eq: user.documentId } } },
+          student: { documentId: { $eq: user.documentId } },
           course: { documentId: { $eq: courseId } }
         },
         populate: {
@@ -357,17 +358,17 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
               modules: {
                 populate: {
                   lectures: {
-                    fields: ["id"]
+                    fields: ["id", "slug", "documentId"]
                   }
                 }
               }
             }
           },
           lectures_completed: {
-            fields: ["id"]
+            fields: ["id", "slug", "documentId"]
           },
           current_lecture: {
-            fields: ["id"]
+            fields: ["id", "slug", "documentId"]
           }
         }
       }
@@ -384,44 +385,32 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
       return ctx.badRequest("This course does not have any lectures")
     }
 
-    const currentLectureIndex = rawLectures.findIndex(
-      l => l.id.toString() === lecture
-    )
+    const currentLectureIndex = rawLectures.findIndex(l => l.documentId === lecture_id)
     if (currentLectureIndex < 0 ) {
       return ctx.badRequest("The lecture does not exist or does not belong to this course")
     }
 
-    let updateCurrentLecture = true
     let classesCompleted = student.lectures_completed
     if (!classesCompleted || !classesCompleted.length) {
-      classesCompleted = [lecture]
+      classesCompleted = [lecture_id]
     } else {
       // Check whether the lecture is already marked as completed
       // if so, remove it from the list
-      const idx = classesCompleted.findIndex(l => l.id.toString() === lecture)
+      const idx = classesCompleted.findIndex(l => l.documentId === lecture_id)
       if (idx < 0) {
         // The lecture is being marked as completed
-        classesCompleted.push(lecture)
-      } else {
-        // The lecture is being unmarked as completed
-        const firstHalf = classesCompleted.slice(0, idx)
-        const secondHalf = classesCompleted.slice(idx + 1)
-        classesCompleted = firstHalf.concat(secondHalf)
-        // Don't update the current lecture
-        updateCurrentLecture = false
+        classesCompleted.push(lecture_id)
       }
     }
 
-    // Set as current lecture the lecture that follows the one just marked as seen
+    // Set as current lecture the lecture that follows the one just marked as completed
     let newCurrentLecture = student.current_lecture
-    if (updateCurrentLecture) {
-      if (currentLectureIndex !== rawLectures.length - 1) {
-        // not the last lecture
-        newCurrentLecture = rawLectures[currentLectureIndex + 1]
-      } else {
-        // is the last lecture
-        newCurrentLecture = rawLectures[currentLectureIndex]
-      }
+    if (currentLectureIndex !== rawLectures.length - 1) {
+      // not the last lecture
+      newCurrentLecture = rawLectures[currentLectureIndex + 1]
+    } else {
+      // is the last lecture
+      newCurrentLecture = rawLectures[currentLectureIndex]
     }
 
     // Update student
@@ -502,7 +491,7 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
                   fields: ["documentId", "title", "duration"],
                   populate: {
                     lectures: {
-                      fields: ["documentId", "title", "duration"],
+                      fields: ["documentId", "title", "duration", "description"],
                     }
                   }
                 },

@@ -32,6 +32,9 @@
       "relation": "manyToOne",
       "target": "plugin::masterclass.mc-module",
       "inversedBy": "lectures"
+    },
+    "description": {
+      "type": "blocks"
     }
   }
 }

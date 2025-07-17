@@ -148,7 +148,7 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
         },
         populate: {
           lectures_completed: {
-            fields: ["id"]
+            fields: ["id", "slug"]
           }
         }
       }

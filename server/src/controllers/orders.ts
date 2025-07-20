@@ -181,6 +181,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     ctx.body = {
       courses,
       is_new_account: !user.confirmed,
+      user_email: user.email,
       id: order.id,
       documentId: order.documentId,
       amount: order.amount,

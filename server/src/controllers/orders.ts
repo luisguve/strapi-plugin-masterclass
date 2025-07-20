@@ -3,6 +3,7 @@ import { Context } from 'koa';
 import { courseQuery } from "./categories";
 import { getService } from '../utils';
 import { COURSE_MODEL, ORDER_MODEL } from '../utils/types';
+import { v4 as uuidv4 } from 'uuid';
 
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
   async find(ctx: Context) {
@@ -47,18 +48,37 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     }
   },
   async create(ctx) {
-    const { user } = ctx.state
-    if (!user) {
-      return ctx.badRequest("User must be authenticated")
-    }
-
-    const { courses, payment_method } = ctx.request.body
+    const { courses, payment_method, email } = ctx.request.body
     if (!courses || !courses.length) {
       return ctx.badRequest("No items received")
     }
 
     if (!['credit_card', 'paypal'].includes(payment_method)) {
       return ctx.badRequest("Wrong payment_method: " + payment_method);
+    }
+
+    let { user } = ctx.state;
+
+    if (!user) {
+      if (!email) {
+        return ctx.badRequest("email is not defined");
+      }
+      user = await strapi.documents("plugin::users-permissions.user").findFirst({
+        filters: { email: { $eq: email } },
+      });
+    }
+
+    if (!user) {
+      // Create new user.
+      user = await strapi.service('plugin::users-permissions.user').add({
+        blocked: false,
+        confirmed: false,
+        username: email,
+        email: email,
+        password: uuidv4(),
+        provider: 'local',
+        role: 1
+      });
     }
 
     const items = [];
@@ -81,7 +101,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     const params = {
       user,
       payment_method,
-      payload: {courses_ids: courses},
+      payload: { courses_ids: courses },
       items
     }
 
@@ -100,14 +120,9 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     ctx.body = result
   },
   async confirm(ctx) {
-    const { user } = ctx.state
-    if (!user) {
-      return ctx.badRequest("User must be authenticated")
-    }
     const { checkout_session } = ctx.request.body
 
     const params = {
-      user,
       checkout_session
     }
 
@@ -128,7 +143,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       return ctx.badRequest("Could not confirm payment");
     }
 
-    const { courses_ids } = order.payload
+    let { courses_ids } = order.payload
 
     let courses = []
 
@@ -143,6 +158,21 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       })
     }
 
+    const email = order.response.customer_email;
+    let { user } = ctx.state;
+
+    if (user && (user.email != email)) {
+      return ctx.badRequest('unmatched user and order email');
+    }
+
+    if (!user) {
+      user = order.user;
+    }
+
+    if (!user) {
+      return ctx.badRequest("order doesn't have user");
+    }
+
     // Sign in user to the courses purchased.
     if (courses.length > 0) {
       await getService("courses").signIntoMultipleCourses({user, courses});
@@ -150,6 +180,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
     ctx.body = {
       courses,
+      is_new_account: !user.confirmed,
       id: order.id,
       documentId: order.documentId,
       amount: order.amount,

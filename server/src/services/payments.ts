@@ -10,7 +10,7 @@ const paymentsService = ({ strapi }: { strapi: Core.Strapi }) => ({
       return {
         error: true,
         status: "badRequest",
-        msg: "User must be authenticated"
+        msg: "user is required"
       }
     }
     if (!payment_method) {
@@ -68,15 +68,8 @@ const paymentsService = ({ strapi }: { strapi: Core.Strapi }) => ({
     return { id: result.checkout_session, ...result }
   },
   async confirm(params) {
-    const { user, checkout_session } = params
+    const { checkout_session } = params
 
-    if (!user) {
-      return {
-        error: true,
-        status: "badRequest",
-        msg: "User must be authenticated"
-      }
-    }
     if (!checkout_session) {
       return {
         error: true,
@@ -93,7 +86,7 @@ const paymentsService = ({ strapi }: { strapi: Core.Strapi }) => ({
       },
       populate: {
         user: {
-          fields: ["id"]
+          fields: ["id", "confirmed", "email"]
         }
       }
     });
@@ -103,13 +96,6 @@ const paymentsService = ({ strapi }: { strapi: Core.Strapi }) => ({
         error: true,
         status: "notFound",
         msg: "Order not found"
-      }
-    }
-    if (order.user.id !== user.id) {
-      return {
-        error: true,
-        status: "forbidden",
-        msg: "This order does not belong to this user"
       }
     }
 

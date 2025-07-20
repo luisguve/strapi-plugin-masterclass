@@ -68,7 +68,9 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       });
     }
 
-    if (!user) {
+    if (user) {
+      // Check whether user already has this course.
+    } else {
       // Create new user.
       user = await strapi.service('plugin::users-permissions.user').add({
         blocked: false,
@@ -182,6 +184,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       courses,
       is_new_account: !user.confirmed,
       user_email: user.email,
+      checkout_session: order.checkout_session,
       id: order.id,
       documentId: order.documentId,
       amount: order.amount,
@@ -191,5 +194,47 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       publishedAt: order.publishedAt,
       updatedAt: order.updatedAt,
     };
+  },
+  async finishRegister(ctx) {
+    const { checkout_session, email, password, username } = ctx.request.body;
+
+    const order = await strapi.documents(ORDER_MODEL).findFirst({
+      filters: {
+        checkout_session: {
+          $eq: checkout_session
+        }
+      },
+      populate: {
+        user: {
+          fields: ["id", "documentId", "confirmed", "email"]
+        }
+      }
+    });
+
+    if (!order) {
+      return ctx.notFound(`order ${checkout_session} not found`);
+    }
+    if (!order.user) {
+      return ctx.badRequest(`order doesn't have an user`);
+    }
+    if (order.user.email != email) {
+      return ctx.badRequest('unmatched user and order email');
+    }
+    if (order.user.email.confirmed) {
+      return ctx.badRequest('user already confirmed');
+    }
+
+    await strapi.documents("plugin::users-permissions.user").update({
+      documentId: order.user.documentId,
+      data: {
+        username,
+        password,
+        confirmed: true
+      } as any
+    });
+
+    ctx.body = {
+      ok: true
+    }
   }
 });

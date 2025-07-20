@@ -135,4 +135,12 @@ export default [
       policies: [],
     }
   },
+  {
+    method: 'PUT',
+    path: '/orders/finish-register',
+    handler: 'orders.finishRegister',
+    config: {
+      policies: [],
+    }
+  },
 ];

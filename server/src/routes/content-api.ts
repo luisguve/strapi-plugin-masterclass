@@ -137,6 +137,14 @@ export default [
   },
   {
     method: 'PUT',
+    path: '/orders/confirm-with-user',
+    handler: 'orders.confirmWithUser',
+    config: {
+      policies: [],
+    }
+  },
+  {
+    method: 'PUT',
     path: '/orders/finish-register',
     handler: 'orders.finishRegister',
     config: {

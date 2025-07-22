@@ -26,15 +26,21 @@ const coursesService = ({ strapi }: { strapi: Core.Strapi }) => ({
       documentId: user.documentId,
       populate: {
         courses: {
-          fields: ["id"]
+          populate: {
+            course: {
+              fields: ['documentId']
+            }
+          }
         }
       }
     });
     if (!student) {
       return new ApplicationError("No user found");
     }
-    const newCourses = courses.filter(c => {
-      return !student.courses.some(({id}) => id === c.id);
+    const newCourses = courses.filter(course => {
+      return !student.courses.some(studentCourse => {
+        return studentCourse.course.documentId == course.documentId
+      });
     });
     return await Promise.all(newCourses.map(c => {
       return strapi.documents(STUDENT_COURSE_MODEL).create({
@@ -43,7 +49,7 @@ const coursesService = ({ strapi }: { strapi: Core.Strapi }) => ({
           course: c.id
         }
       });
-    }))
+    }));
   },
   async calculateDuration(lectures) {
     const storedLectures = await strapi.documents(LECTURE_MODEL).findMany({

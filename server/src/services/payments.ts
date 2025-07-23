@@ -4,7 +4,7 @@ import { ORDER_MODEL } from '../utils/types';
 
 const paymentsService = ({ strapi }: { strapi: Core.Strapi }) => ({
   async create(params) {
-    const { user, payment_method, payload, items } = params
+    const { user, payment_method, courses } = params
 
     if (!user) {
       return {
@@ -27,6 +27,12 @@ const paymentsService = ({ strapi }: { strapi: Core.Strapi }) => ({
         msg: "Payment method must be either 'credit_card' or 'paypal'"
       }
     }
+    const items = courses.map(course => {
+      return {
+        price: course.price,
+        label: course.title
+      }
+    });
     let validItems = Array.isArray(items) && items.every(item => {
       return (item.label) && (item.price !== undefined)
     })
@@ -46,7 +52,7 @@ const paymentsService = ({ strapi }: { strapi: Core.Strapi }) => ({
       serviceName = "paypal";
     }
 
-    const result = await getService(serviceName).createCheckoutSession(params);
+    const result = await getService(serviceName).createCheckoutSession({...params, items});
     if (result.error) {
       return result;
     }
@@ -59,9 +65,9 @@ const paymentsService = ({ strapi }: { strapi: Core.Strapi }) => ({
         confirmed: false,
         checkout_session: result.checkout_session,
         payment_method,
-        payload,
         response: result.data,
         items,
+        courses
       }
     })
 

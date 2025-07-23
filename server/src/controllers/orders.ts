@@ -37,7 +37,8 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     const order = await strapi.documents(ORDER_MODEL).findOne({
       documentId: id,
       populate: {
-        user: { fields: ['id'] }
+        user: { fields: ['id'] },
+        courses: true
       }
     })
     if (order && (order.user.id !== user.id)) {
@@ -101,28 +102,22 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       });
     }
 
-    const items = [];
     // Get courses details
-    for (let i = 0; i < courses.length; i++) {
-      const id = courses[i]
-      const course = await strapi.documents(COURSE_MODEL).findOne({
-        documentId: id,
-        fields: ["title", "price"]
-      });
-      if (!course) {
-        return ctx.badRequest("course " + id + " not found");
+    const _courses = await strapi.documents(COURSE_MODEL).findMany({
+      filters: {
+        documentId: {
+          $in: courses
+        }
       }
-      items.push({
-        price: course.price,
-        label: course.title
-      });
+    });
+    if (!_courses.length) {
+      return ctx.badRequest("courses not found");
     }
 
     const params = {
       user,
       payment_method,
-      payload: { courses_ids: courses },
-      items
+      courses: _courses
     }
 
     let result
@@ -157,7 +152,8 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       populate: {
         user: {
           fields: ["id", "email"]
-        }
+        },
+        courses: courseQuery
       }
     });
 
@@ -169,20 +165,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       return ctx.badRequest('unmatched user and order email');
     }
 
-    let { courses_ids } = order.payload;
-
-    let courses = [];
-
-    if (courses_ids && courses_ids.length > 0) {
-      courses = await strapi.documents(COURSE_MODEL).findMany({
-        filters: {
-          documentId: {
-            $in: courses_ids
-          }
-        },
-        ...courseQuery
-      });
-    }
+    const { courses } = order;
 
     if (order.confirmed) {
       ctx.body = {
@@ -256,7 +239,8 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       populate: {
         user: {
           fields: ["id", "confirmed", "email"]
-        }
+        },
+        courses: courseQuery
       }
     });
 
@@ -269,18 +253,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       return ctx.badRequest("order doesn't have user");
     }
 
-    let { courses_ids } = order.payload;
-    let courses = [];
-    if (courses_ids && courses_ids.length > 0) {
-      courses = await strapi.documents(COURSE_MODEL).findMany({
-        filters: {
-          documentId: {
-            $in: courses_ids
-          }
-        },
-        ...courseQuery
-      });
-    }
+    const { courses } = order;
 
     if (order.confirmed) {
       ctx.body = {
@@ -301,9 +274,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     }
 
     try {
-      const params = {
-        checkout_session
-      };
+      const params = { checkout_session };
       const result = await getService("payments").confirm(params);
       if (result.error) {
         return ctx[result.status](result.msg);

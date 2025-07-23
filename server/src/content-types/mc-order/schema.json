@@ -39,16 +39,18 @@
       ],
       "configurable": false
     },
-    "payload": {
-      "type": "json",
-      "configurable": false
-    },
     "items": {
       "type": "json",
       "configurable": false
     },
     "response": {
       "type": "json",
+      "configurable": false
+    },
+    "courses": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugin::masterclass.mc-course",
       "configurable": false
     }
   }

@@ -34,6 +34,7 @@ npm i strapi-plugin-masterclass
 
 Once installed, set the following values in your project's .env:
 
+```
 ACCESS_TOKEN_ID={Access token ID}
 ACCESS_TOKEN_SECRET={Secret key}
 WEBHOOK_SIGNING_SECRET={Webhook signing secret}
@@ -43,6 +44,7 @@ SIGNING_KEY_PRIVATE_KEY={Base64-encoded Private Key}
 STRIPE_SECRET_KEY={Secret key}
 STRIPE_CHECKOUT_SUCCESS_URL={Checkout success URL}
 STRIPE_CHECKOUT_CANCEL_URL={Checkout cancel URL}
+```
 
 ## Setting up permissions
 

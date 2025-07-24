@@ -12,15 +12,15 @@ Transform your Strapi app into a Learning Management System to create and sell c
 
 - Strapi V5.x.x
 - Mux account
-- - Access token ID
-- - Secret Key
-- - Webhook signing secret
-- - Signing Key ID
-- - Base64-encoded Private Key
+  - Access token ID
+  - Secret Key
+  - Webhook signing secret
+  - Signing Key ID
+  - Base64-encoded Private Key
 - Stripe account
-- - Secret key
-- - Checkout success URL
-- - Checkout cancel URL
+  - Secret key
+  - Checkout success URL
+  - Checkout cancel URL
 
 ## Installation
 

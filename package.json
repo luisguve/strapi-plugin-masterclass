@@ -1,8 +1,8 @@
 {
   "name": "masterclass",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Masterclass plugin",
-  "keywords": [],
+  "keywords": ["strapi", "strapi-plugin", "LMS", "Learning Management System", "mux"],
   "license": "MIT",
   "author": "Luis G. Villegas <luisguveal@gmail.com>",
   "type": "commonjs",
@@ -68,7 +68,7 @@
   "strapi": {
     "kind": "plugin",
     "name": "masterclass",
-    "displayName": "Masterclass",
-    "description": "Masterclass plugin"
+    "displayName": "Masterclass LMS",
+    "description": "Transform your Strapi app into a Learning Management System to create and sell courses online effortlessly."
   }
 }

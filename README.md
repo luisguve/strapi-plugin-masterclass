@@ -11,6 +11,7 @@ Transform your Strapi app into a Learning Management System to create and sell c
 ## Requirements
 
 - Strapi V5.x.x
+- Must have installed [strapi-plugin-mux-video-uploader](https://www.npmjs.com/package/strapi-plugin-mux-video-uploader)
 - Mux account
   - Access token ID
   - Secret Key
@@ -35,16 +36,43 @@ npm i strapi-plugin-masterclass
 Once installed, set the following values in your project's .env:
 
 ```
-ACCESS_TOKEN_ID={Access token ID}
-ACCESS_TOKEN_SECRET={Secret key}
-WEBHOOK_SIGNING_SECRET={Webhook signing secret}
-SIGNING_KEY_ID={Signing Key ID}
-SIGNING_KEY_PRIVATE_KEY={Base64-encoded Private Key}
+ACCESS_TOKEN_ID={Mux access token ID}
+ACCESS_TOKEN_SECRET={Mux secret key}
+WEBHOOK_SIGNING_SECRET={Mux webhook signing secret}
+SIGNING_KEY_ID={Mux signing Key ID}
+SIGNING_KEY_PRIVATE_KEY={Mux base64-encoded Private Key}
 
-STRIPE_SECRET_KEY={Secret key}
-STRIPE_CHECKOUT_SUCCESS_URL={Checkout success URL}
-STRIPE_CHECKOUT_CANCEL_URL={Checkout cancel URL}
+STRIPE_SECRET_KEY={Stripe secret key}
+STRIPE_CHECKOUT_SUCCESS_URL={Frontend checkout success URL}
+STRIPE_CHECKOUT_CANCEL_URL={Frontend checkout cancel URL}
 ```
+
+Finally, add the following configuration in config/plugins.ts:
+
+```
+export default ({ env }: { env: any }) => ({
+  "masterclass": {
+    enabled: true,
+    config: {
+      stripeSecretKey: env('STRIPE_SECRET_KEY'),
+      checkoutSuccessUrl: env('STRIPE_CHECKOUT_SUCCESS_URL'),
+      checkoutCancelUrl: env('STRIPE_CHECKOUT_CANCEL_URL'),
+    }
+  },
+  "mux-video-uploader": {
+    enabled: true,
+    config: {
+      accessTokenId: env('ACCESS_TOKEN_ID'),
+      secretKey: env('ACCESS_TOKEN_SECRET'),
+      webhookSigningSecret: env('WEBHOOK_SIGNING_SECRET'),
+      playbackSigningId: env('SIGNING_KEY_ID'),
+      playbackSigningSecret: env('SIGNING_KEY_PRIVATE_KEY'),
+    }
+  }
+});
+```
+
+And that's it, now you can start the server with `npm run develop`.
 
 ## Setting up permissions
 

@@ -1,5 +1,5 @@
 {
-  "name": "masterclass",
+  "name": "strapi-plugin-masterclass",
   "version": "5.0.0",
   "description": "Masterclass plugin",
   "keywords": ["strapi", "strapi-plugin", "LMS", "Learning Management System", "mux"],

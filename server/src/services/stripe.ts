@@ -39,27 +39,30 @@ const stripeService = ({ strapi }: { strapi: Core.Strapi }) => ({
     let checkout_session;
     let total = 0;
     let data;
-    try {
-      const session = await stripeClient.checkout.sessions.create({
-        payment_method_types: ["card"],
-        line_items: items.map(item => {
-          total += item.price;
-          return {
-            price_data: {
-              currency: "usd",
-              product_data: {
-                name: item.label
-              },
-              unit_amount: fromDecimalToInt(item.price),
+    const checkoutData = {
+      payment_method_types: ["card"],
+      line_items: items.map(item => {
+        total += item.price;
+        return {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: item.label
             },
-            quantity: 1
-          };
-        }),
-        customer_email: user ? user.email : null,
-        mode: "payment",
-        success_url: `${this.success_url}?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${this.cancel_url}?session_id={CHECKOUT_SESSION_ID}`,
-      });
+            unit_amount: fromDecimalToInt(item.price),
+          },
+          quantity: 1
+        };
+      }),
+      mode: "payment",
+      success_url: `${this.success_url}?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${this.cancel_url}?session_id={CHECKOUT_SESSION_ID}`,
+    };
+    if (user) {
+      checkoutData['customer_email'] = user.email;
+    }
+    try {
+      const session = await stripeClient.checkout.sessions.create(checkoutData);
       data = session;
       checkout_session = session.id;
     } catch(err) {

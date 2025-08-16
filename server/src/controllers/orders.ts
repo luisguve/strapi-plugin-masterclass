@@ -51,8 +51,6 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
   async create(ctx) {
     const { courses, payment_method } = ctx.request.body;
 
-    console.log('0here');
-
     if (!courses || !courses.length) {
       return ctx.badRequest("no items received");
     }

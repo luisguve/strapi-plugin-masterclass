@@ -55,7 +55,7 @@ const stripeService = ({ strapi }: { strapi: Core.Strapi }) => ({
             quantity: 1
           };
         }),
-        customer_email: user.email,
+        customer_email: user ? user.email : null,
         mode: "payment",
         success_url: `${this.success_url}?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${this.cancel_url}?session_id={CHECKOUT_SESSION_ID}`,
@@ -95,6 +95,8 @@ const stripeService = ({ strapi }: { strapi: Core.Strapi }) => ({
         msg: "Checkout ID " + checkout_session + " not found"
       };
     }
+    console.log("session:");
+    console.dir(session, { depth: null });
     return session.payment_status;
   }
 });

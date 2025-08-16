@@ -6,13 +6,6 @@ const paymentsService = ({ strapi }: { strapi: Core.Strapi }) => ({
   async create(params) {
     const { user, payment_method, courses } = params
 
-    if (!user) {
-      return {
-        error: true,
-        status: "badRequest",
-        msg: "user is required"
-      }
-    }
     if (!payment_method) {
       return {
         error: true,
@@ -61,7 +54,7 @@ const paymentsService = ({ strapi }: { strapi: Core.Strapi }) => ({
     await strapi.documents(ORDER_MODEL).create({
       data: {
         amount: result.total,
-        user: user.id,
+        user,
         confirmed: false,
         checkout_session: result.checkout_session,
         payment_method,

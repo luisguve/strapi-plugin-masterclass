@@ -49,7 +49,10 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     }
   },
   async create(ctx) {
-    const { courses, payment_method, email } = ctx.request.body;
+    const { courses, payment_method } = ctx.request.body;
+
+    console.log('0here');
+
     if (!courses || !courses.length) {
       return ctx.badRequest("no items received");
     }
@@ -59,15 +62,6 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     }
 
     let { user } = ctx.state;
-
-    if (!user) {
-      if (!email) {
-        return ctx.badRequest("user or email is required");
-      }
-      user = await strapi.documents("plugin::users-permissions.user").findFirst({
-        filters: { email: { $eq: email } },
-      });
-    }
 
     if (user) {
       // Check whether user already has this course.
@@ -89,7 +83,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         ctx.body = {};
         return ctx.badRequest("user already purchased this course", { redirectToLogin: true });
       }
-    } else {
+    }/* else {
       // Create new user.
       user = await strapi.service('plugin::users-permissions.user').add({
         blocked: false,
@@ -100,7 +94,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         provider: 'local',
         role: 1
       });
-    }
+    }*/
 
     // Get courses details
     const _courses = await strapi.documents(COURSE_MODEL).findMany({
@@ -248,9 +242,12 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       return ctx.badRequest('order not found');
     }
 
-    const { user } = order;
+    let { user } = order;
     if (!user) {
-      return ctx.badRequest("order doesn't have user");
+      user = {
+        confirmed: false,
+        email: ""
+      }
     }
 
     const { courses } = order;
@@ -290,8 +287,8 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     }
 
     // Sign in user to the courses purchased.
-    if (courses.length > 0) {
-      await getService("courses").signIntoMultipleCourses({user, courses});
+    if (order.user && (courses.length > 0)) {
+      await getService("courses").signIntoMultipleCourses({user: order.user, courses});
     }
 
     ctx.body = {

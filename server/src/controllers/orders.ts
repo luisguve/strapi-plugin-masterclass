@@ -3,7 +3,6 @@ import { Context } from 'koa';
 import { courseQuery } from "./categories";
 import { getService } from '../utils';
 import { COURSE_MODEL, ORDER_MODEL, STUDENT_COURSE_MODEL } from '../utils/types';
-import { v4 as uuidv4 } from 'uuid';
 
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
   async find(ctx: Context) {
@@ -81,18 +80,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         ctx.body = {};
         return ctx.badRequest("user already purchased this course", { redirectToLogin: true });
       }
-    }/* else {
-      // Create new user.
-      user = await strapi.service('plugin::users-permissions.user').add({
-        blocked: false,
-        confirmed: false,
-        username: email,
-        email: email,
-        password: uuidv4(),
-        provider: 'local',
-        role: 1
-      });
-    }*/
+    }
 
     // Get courses details
     const _courses = await strapi.documents(COURSE_MODEL).findMany({
@@ -252,7 +240,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
     if (order.confirmed) {
       ctx.body = {
-        courses,
+        courses: courses.map(c => ({slug: c.slug, id: c.id, documentId: c.documentId})),
         is_new_account: !user.confirmed,
         user_email: user.email,
         checkout_session: order.checkout_session,
@@ -290,7 +278,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     }
 
     ctx.body = {
-      courses,
+      courses: courses.map(c => ({slug: c.slug, id: c.id, documentId: c.documentId})),
       is_new_account: !user.confirmed,
       user_email: user.email,
       checkout_session: order.checkout_session,

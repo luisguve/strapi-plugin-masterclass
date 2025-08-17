@@ -98,9 +98,10 @@ const stripeService = ({ strapi }: { strapi: Core.Strapi }) => ({
         msg: "Checkout ID " + checkout_session + " not found"
       };
     }
-    console.log("session:");
-    console.dir(session, { depth: null });
-    return session.payment_status;
+    return {
+      customer_details: session.customer_details,
+      payment_status: session.payment_status
+    };
   }
 });
 

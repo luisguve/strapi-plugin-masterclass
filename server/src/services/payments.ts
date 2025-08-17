@@ -1,6 +1,7 @@
 import type { Core } from '@strapi/strapi';
 import { getService } from '../utils';
 import { ORDER_MODEL } from '../utils/types';
+import { v4 as uuidv4 } from 'uuid';
 
 const paymentsService = ({ strapi }: { strapi: Core.Strapi }) => ({
   async create(params) {
@@ -115,7 +116,7 @@ const paymentsService = ({ strapi }: { strapi: Core.Strapi }) => ({
       return result;
     }
 
-    if (result !== "paid" && !result.orderCaptured) {
+    if (result.payment_status !== "paid" && !result.orderCaptured) {
       return {
         error: true,
         status: "badRequest",
@@ -123,12 +124,31 @@ const paymentsService = ({ strapi }: { strapi: Core.Strapi }) => ({
       }
     }
 
+    const data = {
+      confirmed: true
+    } as any;
+
+    let user = order.user;
+    if (!user && result.customer_details && result.customer_details.email) {
+      // Create new user.
+      const { email } = result.customer_details;
+      user = await strapi.service('plugin::users-permissions.user').add({
+        blocked: false,
+        confirmed: false,
+        username: email,
+        email: email,
+        password: uuidv4(),
+        provider: 'local',
+        role: 1
+      });
+      data.user = user;
+      order.user = user;
+    }
+
     // Mark order as confirmed
     await strapi.documents(ORDER_MODEL).update({
       documentId: order.documentId,
-      data: {
-        confirmed: true
-      } as any
+      data
     })
     order.confirmed = true
     return order

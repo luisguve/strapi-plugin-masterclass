@@ -144,6 +144,8 @@ const paymentsService = ({ strapi }: { strapi: Core.Strapi }) => ({
       data.user = user;
       order.user = user;
     }
+    data.response = result;
+    order.response = result;
 
     // Mark order as confirmed
     await strapi.documents(ORDER_MODEL).update({

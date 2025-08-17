@@ -140,7 +140,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     if (!order) {
       return ctx.badRequest('order not found');
     }
-    const email = order.response.customer_email;
+    const email = order.user.email;
     if (user.email != email) {
       return ctx.badRequest('unmatched user and order email');
     }

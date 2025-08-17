@@ -144,7 +144,7 @@ const paymentsService = ({ strapi }: { strapi: Core.Strapi }) => ({
       data.user = user;
       order.user = user;
     }
-    data.response = result;
+    data.response = JSON.stringify(result);
     order.response = result;
 
     // Mark order as confirmed

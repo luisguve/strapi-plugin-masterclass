@@ -263,6 +263,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         return ctx[result.status](result.msg);
       }
       order = result;
+      user = order.user;
     } catch(err) {
       console.log(err);
       return ctx.internalServerError("something went wrong");

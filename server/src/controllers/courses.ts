@@ -6,6 +6,20 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
   async find(ctx: Context) {
     let courses = await strapi.documents(COURSE_MODEL).findMany({
       populate: {
+        seo: {
+          populate: {
+            metaImage: {
+              fields: ["alternativeText", "url"]
+            },
+            openGraph: {
+              populate: {
+                ogImage: {
+                  fields: ["alternativeText", "url"]
+                }
+              }
+            }
+          }
+        },
         thumbnail: {
           fields: ["name", "url"]
         },
@@ -59,6 +73,20 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
           populate: {
             lectures: {
               fields: ["title", "duration", "slug", "description"],
+            }
+          }
+        },
+        seo: {
+          populate: {
+            metaImage: {
+              fields: ["alternativeText", "url"]
+            },
+            openGraph: {
+              populate: {
+                ogImage: {
+                  fields: ["alternativeText", "url"]
+                }
+              }
             }
           }
         },

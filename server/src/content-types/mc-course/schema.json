@@ -78,6 +78,11 @@
       "relation": "manyToOne",
       "target": "plugin::masterclass.mc-instructor",
       "inversedBy": "courses"
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
     }
   }
 }

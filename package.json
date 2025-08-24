@@ -1,6 +1,6 @@
 {
   "name": "strapi-plugin-masterclass",
-  "version": "5.0.12",
+  "version": "5.1.0",
   "description": "Masterclass plugin",
   "keywords": ["strapi", "strapi-plugin", "LMS", "Learning Management System", "mux"],
   "license": "MIT",
@@ -49,8 +49,8 @@
   },
   "devDependencies": {
     "@strapi/sdk-plugin": "^5.3.2",
-    "@strapi/strapi": "^5.12.3",
-    "@strapi/typescript-utils": "^5.12.3",
+    "@strapi/strapi": "^5.23.0",
+    "@strapi/typescript-utils": "^5.23.0",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.1",
     "prettier": "^3.5.3",
@@ -62,11 +62,12 @@
   },
   "peerDependencies": {
     "@strapi/sdk-plugin": "^5.3.2",
-    "@strapi/strapi": "^5.12.3",
+    "@strapi/strapi": "^5.23.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.30.0",
     "strapi-plugin-mux-video-uploader": "^3.0.1",
+    "@strapi/plugin-seo": "2.0.8",
     "styled-components": "^6.1.17"
   },
   "strapi": {

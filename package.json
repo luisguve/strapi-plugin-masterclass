@@ -1,6 +1,6 @@
 {
   "name": "strapi-plugin-masterclass",
-  "version": "5.1.1",
+  "version": "5.1.2",
   "description": "Masterclass plugin",
   "keywords": ["strapi", "strapi-plugin", "LMS", "Learning Management System", "mux"],
   "license": "MIT",
